@@ -33,11 +33,12 @@ public class DriverFactory
         }
        getWebDriver().manage().deleteAllCookies();
 getWebDriver().manage().window().maximize();
+
 return getWebDriver();
     }
 public static WebDriver getWebDriver()
 {
-    System.out.println("In the getWebDriverMethod");
+
     return tlDriver.get();
 
 }}

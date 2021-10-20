@@ -37,7 +37,7 @@ public class SeleniumHelper {
             throw t;
         }}
 
-    public void sendtext(String text, WebElement element) {
+    public void sendText(String text, WebElement element) {
         element.sendKeys(text);
     }
     public void refresh(WebDriver driver){
@@ -72,7 +72,9 @@ public class SeleniumHelper {
     public boolean validateText(WebDriver driver, WebElement element, String expectedText) {
         String actualText = element.getText();
         if(actualText.equals(expectedText))
-        { return true;
+        {
+            return true;
+
     }return  false;
     }
 }

@@ -4,5 +4,5 @@ Feature: create a BDD project for testScriptDemo
     When I view my wishlist table
     Then I find total four selected items in my wishlist
     When I search for lower price product
-    And I am able to add lowest price item to my
+    And I am able to add lowest price item to my cart
     Then I am able to verify the item in my cart

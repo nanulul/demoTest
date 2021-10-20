@@ -1,6 +1,6 @@
 package pages;
 
-import io.cucumber.java.de.Wenn;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,27 +10,41 @@ import org.openqa.selenium.support.ui.Select;
 import util.SeleniumHelper;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class TestScriptDemoPage {
     private WebDriver driver;
 
-    //locators
-    private By homeTab = By.id("menu-item-309");
-    private By saleTab = By.id("menu-item-306");
-    private By shopTab = By.id("menu-item-310");
-    private By AboutUs = By.id("menu-item-307");
-    private By Contact = By.id("menu-item-308");
-    private By sortOrder = By.name("orderby");
+
+    @FindBy(xpath = "//select[@name='orderby']")
+    WebElement sortOrder;
     @FindBy(xpath = "//*[@id='site-content']//a[@data-product-id=23]")
     WebElement topPantsUpperWishList;
     @FindBy(xpath = "//*[@id='site-content']//a[@data-product-id=24]")
-    WebElement womensDressWishList;
+    WebElement womenDressWishList;
     @FindBy(xpath = "//*[@id='site-content']//a[@data-product-id=22]")
     WebElement bikiniWishList;
     @FindBy(xpath = "//*[@id='site-content']//a[@data-product-id=20]")
     WebElement singleShirtWishList;
-    @FindBy(xpath = "//table/tbody[@class='wishlist-items-wrapper']")
-    WebElement wishListtable;
+    @FindBy(xpath = "//table[@data-id='7572']")
+    WebElement wishListTable;
+    @FindBy(xpath = "//table//tbody/tr")
+    List<WebElement> wishListTableContent;
+    @FindBy(xpath = "//*[@id='yith-wcwl-row-20']")
+    WebElement singleShirtInWishList;
+    @FindBy(xpath = "//*[@id='yith-wcwl-row-22']")
+    WebElement bikiniInWishlist;
+    @FindBy(xpath = "//*[@id='yith-wcwl-row-23']")
+    WebElement topPantsInWishList;
+    @FindBy(xpath = "//*[@id='yith-wcwl-row-24']")
+    WebElement womenDressInInWishList;
+    @FindBy(xpath = "//option[@value='price'']")
+    WebElement sortByLowPrice;
+    @FindBy(xpath = "//a[@data-product_sku='woo-beanie']")
+    WebElement lowerProductAddCart;
+    @FindBy(xpath = "//tbody/tr[@class='woocommerce-cart-form__cart-item cart_item']")
+    WebElement lowerPriceProductInCart;
+
 
     @FindBy(xpath = "//*[@id='site-content']/div/div/div/div/section[4]/div/div/div/div/div/div/div/ul/li[3]/a[1]/img")
     WebElement singleShirt;
@@ -40,12 +54,13 @@ public class TestScriptDemoPage {
 
     @FindBy(xpath = "//*[@id='site-content']//table[@class='shop_table shop_table_responsive cart woocommerce-cart-form__contents']")
     WebElement cartTable;
-@FindBy(xpath = "//*[@id=\"product-20\"]/div[2]/form/button[3]")
-    WebElement addToCartButton;
-    @FindBy (xpath = "//*[@id=\"blog\"]/div[3]/div[1]/div/div/div[2]/div[1]/form/button")
-   WebElement searchIcon;
 
-    private By wishList = By.className("header-wishlist");
+    @FindBy(xpath = "//*[@id='product-20']/div[2]/form/button[3]")
+    WebElement addToCartButton;
+    @FindBy (xpath = "//button[@class='header-search-button']")
+    WebElement searchIcon;
+
+
    @FindBy(xpath = "//*[@id='blog']//a[@data-tooltip='Wishlist']")
     WebElement wishListIcon;
 
@@ -55,35 +70,14 @@ public class TestScriptDemoPage {
     WebElement cartIcon;
 
 
-    public Select listSearch;
 
-    @FindBy(className = "yith-wcwl-row-20")
 
-    List<WebElement> wishListTable;
-    //  private By searchCategoryList = By.name("product_cat");
 
 SeleniumHelper selenium;
     public TestScriptDemoPage(WebDriver driver) {
         PageFactory.initElements(driver,this);
         selenium = new SeleniumHelper();
         this.driver = driver;
-    }
-public boolean addToCartSingleShirt(WebDriver driver) {
-        selenium.mouseHover(singleShirt, driver);
-        selenium.click(singleShirt);
-        selenium.click(addToCartButton);
-    System.out.println("clicked on Add To cart Button");
-        selenium.click(cartIcon);
-    System.out.println("Clicked on Cart Button");
-        selenium.clickUsingJavaScript(cartIcon,driver);
-    System.out.println("Clicked on Cart Button");
-    System.out.println(singleShirt.isDisplayed());
-       selenium.validateText(driver,singleShirtWishList,"Single Shirt");
-
-        return false;
-}
-    public void clickSaleTab() {
-        driver.findElement(saleTab).click();
     }
 
     public String getPageTitle() {
@@ -94,20 +88,49 @@ public boolean addToCartSingleShirt(WebDriver driver) {
         selenium.refresh(driver);
         selenium.click(searchIcon);
             }
-    public void clickWishListIcons(WebDriver driver){
+
+    public boolean verifyWishListTable(WebDriver driver){
+        /*if(wishListTable.isDisplayed())
+        {
+            return true;
+
+        }return  false;*/
+
+        int rows = wishListTableContent.size();
+        System.out.println("The Wishlist table displayed with "+rows+"rows");
+
+        if(rows==4)
+        {
+            return true;
+
+        }return  false;
+
+    }
+
+
+    public void verifyWishListProducts(WebDriver driver){
     selenium.click(wishListIcon);
-        selenium.validateText(driver,singleShirtWishList,"\n" +
-                "\t\t\t\t\t\t\tSingle Shirt\t\t\t\t\t\t");
-        selenium.validateText(driver,womensDressWishList,"\n" +
-                "\t\t\t\t\t\t\tWomen's dress\t\t\t\t\t\t");
-        selenium.validateText(driver,bikiniWishList,"\n" +
-                "\t\t\t\t\t\t\tBikini\t\t\t\t\t\t");
-        selenium.validateText(driver,topPantsUpperWishList,"\n" +
-                "\t\t\t\t\t\t\tTop pants upper\t\t\t\t\t\t");
+      //  selenium.validateText(driver,singleShirtInWishList, "test");
+        String Actualtext1 = "×\n" +
+                "Single Shirt £30.00 £20.00 In Stock\n" +
+                "Add to cart";
+        String Actualtext2 = "×\n" +
+                "Women's dress £20.00 In Stock\n" +
+                "Add to cart";
+        String Actualtext3 = "×\n" +
+                "Bikini £25.00 £19.00 In Stock\n" +
+                "Add to cart";
+        String Actualtext4 = "×\n" +
+                "Top pants upper £22.00 – £89.00 In Stock\n" +
+                "Add to cart";
+        Assert.assertEquals(selenium.getText(singleShirtInWishList, driver),Actualtext1);
+       Assert.assertEquals(selenium.getText(womenDressInInWishList,driver),Actualtext2);
+        Assert.assertEquals(selenium.getText(bikiniInWishlist,driver),Actualtext3);
+        Assert.assertEquals(selenium.getText(topPantsInWishList,driver),Actualtext4);
 
     }
     public void clickWishList(WebDriver driver) throws InterruptedException {
-        selenium.click(womensDressWishList);
+        selenium.click(womenDressWishList);
         Thread.sleep(6000);
         selenium.click(singleShirtWishList);
         Thread.sleep(6000);
@@ -119,20 +142,47 @@ public boolean addToCartSingleShirt(WebDriver driver) {
     }
 
 
-    public boolean clickSearchCategoryList() {
 
-        searchCategoryList.isSelected();
-        return false;
-    }
-
-    public void selectCategory(String value) throws InterruptedException {
+   /* public void selectCategory(String value) throws InterruptedException {
         boolean visibility =  searchCategoryList.isDisplayed();
         System.out.println(visibility);
         listSearch = new Select(searchCategoryList);
         System.out.println("List found");
         searchCategoryList.click();
         listSearch.selectByValue(value);
+        }
+*/
+
+    public void searchLowerPriceProduct(WebDriver driver, String value){
+        Select searchFilter = new Select(sortOrder);
+        searchFilter.selectByValue("price");
 
     }
+    public void addToCartLowPriceProduct(WebDriver driver) {
+        //  selenium.mouseHover(singleShirt, driver);
+        System.out.println("lower price product displayed:"+lowerProductAddCart.isDisplayed());
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        selenium.click(lowerProductAddCart);
+        // selenium.click(addToCartButton);
+        System.out.println("clicked on Add To cart Button");
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+    }
+    public void clickCartIcon(WebDriver driver){
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        selenium.click(cartIcon);
+        selenium.clickUsingJavaScript(cartIcon,driver);
+        System.out.println("Clicked on Cart Button");
+        selenium.validateText(driver,lowerProductAddCart,"Modern");
+
+    }
+
+    public String verifyCart(WebDriver driver){
+
+        String productName=  selenium.getText(lowerPriceProductInCart, driver);
+        return productName;
+    }
+
+
 }
 
